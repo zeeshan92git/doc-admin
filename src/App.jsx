@@ -12,9 +12,10 @@ import AllAppointments from './pages/Admin/AllAppointments.jsx';
 import Dashboard from './pages/Admin/Dashboard.jsx';
 import DoctorList from './pages/Admin/DoctorList.jsx';
 import { DoctorContext } from './context/DoctorContext.jsx';
+
 import DocDashBoard from './pages/Doctor/DocDashBoard.jsx';
 import DocAppointment from './pages/Doctor/DocAppointment.jsx';
-import DocProfile from './pages/Doctor/docProfile.jsx';
+import DocProfile from './pages/Doctor/DocProfile.jsx';
 
 function App() {
 
