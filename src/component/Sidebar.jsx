@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { AdminContext } from '../context/AdminContext';
 import { NavLink } from 'react-router-dom';
-import { SquarePlus, CalendarDays, HousePlus, Users , CircleUser } from 'lucide-react';
+import { SquarePlus, CalendarDays, HousePlus, Users, CircleUser, Mail } from 'lucide-react';
 import { DoctorContext } from '../context/DoctorContext';
 
 const Sidebar = () => {
@@ -29,6 +29,10 @@ const Sidebar = () => {
           <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-blue-100  border-r-4 border-blue-500' : ''}`} to={'/doctor-list'}>
             <Users />
             <p className='hidden md:block'>Doctor List</p>
+          </NavLink>
+          <NavLink className={({ isActive }) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive ? 'bg-blue-100 border-r-4 border-blue-500' : ''}`} to={'/inquiries'}>
+            <Mail />
+            <p className='hidden md:block'>Inquiries</p>
           </NavLink>
         </ul>
       }
