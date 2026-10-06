@@ -11,6 +11,7 @@ import AddDoct from './pages/Admin/AddDoct.jsx';
 import AllAppointments from './pages/Admin/AllAppointments.jsx';
 import Dashboard from './pages/Admin/Dashboard.jsx';
 import DoctorList from './pages/Admin/DoctorList.jsx';
+import InquiryInbox from './pages/Admin/InquiryInbox.jsx';
 import { DoctorContext } from './context/DoctorContext.jsx';
 
 import DocDashBoard from './pages/Doctor/DocDashBoard.jsx';
@@ -36,6 +37,7 @@ function App() {
             <Route path="/all-appointment" element={<AllAppointments />} />
             <Route path="/admin-dashboard" element={<Dashboard />} />
             <Route path="/doctor-list" element={<DoctorList />} />
+            <Route path="/inquiries" element={<InquiryInbox />} />
             {/* Doctor Routes */}
             <Route path="/doc-dashboard" element={<DocDashBoard />} />
             <Route path="/doc-profile" element={<DocProfile />} />

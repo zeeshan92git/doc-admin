@@ -1,5 +1,5 @@
 import React from "react";
-import { createContext, useState } from "react";
+import { createContext, useCallback, useState } from "react";
 import axios from 'axios';
 import {toast} from 'react-toastify';
 
@@ -10,6 +10,8 @@ const AdminContextProvider = (props) => {
     const [aToken, setaToken] = useState(localStorage.getItem('aToken') ? localStorage.getItem('aToken') : '');
     const [doctors,setdoctors] = useState([]);
     const [appointments,setAppointments] = useState([]);
+    const [inquiries, setInquiries] = useState([]);
+    const [inquiriesLoading, setInquiriesLoading] = useState(false);
     const [dashData,setdashData] = useState(false);
     console.log('Token received from local storage in admincontext.jsx....', aToken);
 
@@ -105,11 +107,53 @@ const AdminContextProvider = (props) => {
         }
     }
 
+
+    const getInquiries = useCallback(async () => {
+        if (!aToken) return;
+        setInquiriesLoading(true);
+        try {
+            const { data } = await axios.get(backEndUrl + '/api/admin/inquiries', {
+                params: { page: 1, limit: 100 },
+                headers: { Authorization: `Bearer ${aToken}` }
+            });
+            if (data.success) {
+                setInquiries(data.data || []);
+            } else {
+                toast.error(data.message || 'Could not load inquiries.');
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message || 'Could not load inquiries.');
+        } finally {
+            setInquiriesLoading(false);
+        }
+    }, [aToken, backEndUrl]);
+
+    const updateInquiryStatus = async (inquiryId, status) => {
+        try {
+            const { data } = await axios.patch(
+                backEndUrl + `/api/admin/inquiries/${inquiryId}/status`,
+                { status },
+                { headers: { Authorization: `Bearer ${aToken}` } }
+            );
+            if (data.success) {
+                setInquiries((current) => current.map((inquiry) =>
+                    inquiry._id === inquiryId ? data.data : inquiry
+                ));
+                toast.success(data.message || 'Inquiry updated.');
+            } else {
+                toast.error(data.message || 'Could not update inquiry.');
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message || 'Could not update inquiry.');
+        }
+    };
+
     const value = {
         aToken,
         backEndUrl ,  setaToken: updateToken
         ,doctors , getAllDoctors , changeAvailability
         ,appointments , setAppointments , getAllAppointments , cancelAppointment , dashData , getDashData
+        ,inquiries, inquiriesLoading, getInquiries, updateInquiryStatus
     }
 
     return (
