@@ -3,84 +3,66 @@ import { Check, Clock3, Mail, RefreshCw } from 'lucide-react';
 import { AdminContext } from '../../context/AdminContext.jsx';
 
 const InquiryInbox = () => {
-  const {
-    aToken,
-    inquiries,
-    inquiriesLoading,
-    getInquiries,
-    updateInquiryStatus
-  } = useContext(AdminContext);
+  const { aToken, inquiries, inquiriesLoading, getInquiries, updateInquiryStatus } = useContext(AdminContext);
 
   useEffect(() => {
     if (aToken) getInquiries();
   }, [aToken, getInquiries]);
 
   if (!aToken) {
-    return <main className="m-5 w-full rounded border bg-white p-6 text-sm text-gray-600">Admin access is required to view inquiries.</main>;
+    return <div className="shell section py-8"><div className="panel text-center"><p className="muted">Admin access is required.</p></div></div>;
   }
 
   return (
-    <main className="m-5 w-full max-w-6xl px-2">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <div className="shell section py-6 sm:py-8 reveal">
+      <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-lg font-semibold text-gray-800">Contact inquiries</h1>
-          <p className="mt-1 text-sm text-gray-500">Review messages submitted from the patient website.</p>
+          <span className="label uppercase tracking-widest text-[var(--moss)] block mb-1">Communication</span>
+          <h1 className="t-h2 text-[var(--ink)]">Contact Inquiries</h1>
         </div>
-        <button
-          type="button"
-          onClick={getInquiries}
-          disabled={inquiriesLoading}
-          className="inline-flex items-center gap-2 rounded border bg-white px-3 py-2 text-sm text-gray-700 hover:bg-blue-50 disabled:opacity-60"
-        >
-          <RefreshCw size={16} className={inquiriesLoading ? 'animate-spin' : ''} />
-          Refresh
+        <button type="button" onClick={getInquiries} disabled={inquiriesLoading} className="btn btn-sm">
+          <RefreshCw size={14} className={inquiriesLoading ? 'animate-spin' : ''} />
+          <span>Refresh</span>
         </button>
       </div>
 
-      <section className="max-h-[78vh] min-h-40 space-y-3 overflow-y-auto rounded border bg-gray-50 p-3">
+      <div className="flex flex-col gap-4">
         {inquiriesLoading && inquiries.length === 0 ? (
-          <p className="p-5 text-center text-sm text-gray-500">Loading inquiries…</p>
+          <div className="panel text-center py-12"><p className="muted">Loading inquiries…</p></div>
         ) : inquiries.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 p-10 text-center text-gray-500">
-            <Mail size={28} />
-            <p className="font-medium">No inquiries yet</p>
-            <p className="text-sm">New contact messages will appear here.</p>
+          <div className="panel text-center py-16 flex flex-col items-center gap-3">
+            <Mail size={32} className="text-[var(--mist)]" />
+            <h3 className="t-h3 text-[var(--ink)]">No inquiries yet</h3>
           </div>
-        ) : inquiries.map((inquiry) => (
-          <article key={inquiry._id} className="rounded border bg-white p-4 shadow-sm">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="min-w-0">
-                <h2 className="break-words font-semibold text-gray-800">{inquiry.subject}</h2>
-                <p className="mt-1 text-sm text-gray-600">
-                  {inquiry.name} · <a className="text-blue-700 hover:underline" href={"mailto:" + inquiry.email + "?subject=" + encodeURIComponent("Re: " + inquiry.subject)}>{inquiry.email}</a>
-                </p>
+        ) : (
+          inquiries.map((inquiry) => (
+            <article key={inquiry._id} className="panel p-5 sm:p-6">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <h2 className="t-h3 text-[var(--ink)] truncate">{inquiry.subject}</h2>
+                  <p className="muted text-sm mt-1 break-words">
+                    {inquiry.name} · <a className="text-[var(--brick)] hover:underline font-medium" href={`mailto:${inquiry.email}`}>{inquiry.email}</a>
+                  </p>
+                </div>
+                <span className={`chip text-xs font-semibold ${inquiry.status === 'handled' ? 'is-on' : ''}`}>
+                  {inquiry.status === 'handled' ? <Check size={14} className="mr-1 inline" /> : <Clock3 size={14} className="mr-1 inline" />}
+                  {inquiry.status === 'handled' ? 'Handled' : 'New'}
+                </span>
               </div>
-              <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${inquiry.status === 'handled' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
-                {inquiry.status === 'handled' ? <Check size={14} /> : <Clock3 size={14} />}
-                {inquiry.status === 'handled' ? 'Handled' : 'New'}
-              </span>
-            </div>
-
-            <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-gray-700">{inquiry.message}</p>
-
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t pt-3">
-              <time className="text-xs text-gray-500" dateTime={inquiry.createdAt}>
-                {new Date(inquiry.createdAt).toLocaleString()}
-              </time>
-              {inquiry.status === 'new' && (
-                <button
-                  type="button"
-                  onClick={() => updateInquiryStatus(inquiry._id, 'handled')}
-                  className="rounded bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700"
-                >
-                  Mark handled
-                </button>
-              )}
-            </div>
-          </article>
-        ))}
-      </section>
-    </main>
+              <p className="mt-4 break-words whitespace-pre-wrap text-sm leading-relaxed text-[var(--ink-2)] bg-[var(--bone)]/50 p-4 rounded-xl border border-[var(--rule-faint)]">
+                {inquiry.message}
+              </p>
+              <div className="mt-4 pt-4 border-t border-[var(--rule)] flex flex-wrap items-center justify-between gap-3">
+                <time className="data text-xs text-[var(--mist)]">{new Date(inquiry.createdAt).toLocaleString()}</time>
+                {inquiry.status === 'new' && (
+                  <button type="button" onClick={() => updateInquiryStatus(inquiry._id, 'handled')} className="btn btn-sm btn-solid">Mark as Handled</button>
+                )}
+              </div>
+            </article>
+          ))
+        )}
+      </div>
+    </div>
   );
 };
 

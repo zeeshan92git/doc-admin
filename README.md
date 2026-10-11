@@ -1,69 +1,17 @@
-# DocCure Admin and Doctor Portal
+# DocCure portal UI update
 
-Administrative and doctor-facing web application for managing the DocCure appointment platform.
+Replace the matching files in your existing admin frontend's src folder:
 
-## Features
+- App.jsx, main.jsx and index.css → src/
+- Sidebar.jsx, Navbar.jsx and Home.jsx → src/component/
+- Login.jsx → src/pages/
+- AddDoct.jsx, AllAppointments.jsx, Dashboard.jsx, DoctorList.jsx and InquiryInbox.jsx → src/pages/Admin/
+- DocAppointment.jsx, DocDashBoard.jsx and DocProfile.jsx → src/pages/Doctor/
 
-- Administrator login and doctor management.
-- Appointment and dashboard workflows.
-- Doctor portal pages for appointments, profile, and dashboard.
-- Protected contact inquiry inbox for reviewing patient messages.
-- Mark inquiries as handled and open a reply in the administrator's email client.
+Uses your existing React, React Router, Tailwind CSS, lucide-react, axios and react-toastify dependencies. Keep your existing context providers, assets and backend configuration. No new dependency is required.
 
-The inquiry inbox displays submissions saved by the backend. SMTP is optional; if it is not configured, contact messages are still stored and available here.
+Changes: teal and slate styling, consistent typography and form controls, labeled horizontal navigation on mobile, persistent desktop sidebar, mobile appointment cards, responsive doctor directory, dashboard empty states, larger action targets, accessible form labels and login submission feedback.
 
-## Tech stack
+After replacing files, run your existing npm run dev and npm run build commands. Confirm your HTML includes <meta name="viewport" content="width=device-width, initial-scale=1.0">. Check login in both roles, dashboard loading, appointment actions, doctor creation and availability, profile save and inquiry handling.
 
-React 19, Vite, React Router, Axios, Tailwind CSS, and Lucide icons.
-
-## Requirements
-
-- Node.js and npm
-- The [DocCure backend](https://github.com/zeeshan92git/doc-backend) running locally or deployed
-
-## Setup
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Create a `.env` file at the project root:
-
-```dotenv
-VITE_BACKEND_URL=http://localhost:5000
-```
-
-Set `VITE_BACKEND_URL` to the backend origin, without an API path suffix. For a deployed admin application, configure this variable in the hosting provider's build environment to point at the deployed API.
-
-Start the Vite development server:
-
-```bash
-npm run dev
-```
-
-Sign in with an administrator account configured for the backend. The **Inquiries** page is available from the admin navigation and requires an admin token.
-
-## Inquiry API used by this app
-
-The admin portal sends the token as `Authorization: Bearer <token>`.
-
-| Method and path | Purpose |
-| --- | --- |
-| `GET /api/admin/inquiries?page=1&limit=100` | Load the newest inquiries |
-| `PATCH /api/admin/inquiries/:inquiryId/status` | Mark an inquiry as `handled` or return it to `new` |
-
-The inbox uses a `mailto:` link to open a reply in the user's email client; it does not send replies from the app.
-
-## Scripts
-
-- `npm run dev`: Start the local development server.
-- `npm run build`: Create a production build in `dist/`.
-- `npm run preview`: Preview the production build locally.
-- `npm run lint`: Run ESLint.
-
-## Related applications
-
-- [Backend API](https://github.com/zeeshan92git/doc-backend)
-- [Patient frontend](https://github.com/zeeshan92git/doc-frontend)
+Validation: every JSX file was syntax checked. The attachments do not include package.json, context providers or assets, so a complete production build and live API verification require your existing project.

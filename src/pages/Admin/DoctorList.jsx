@@ -1,41 +1,43 @@
-import React, { useEffect } from 'react';
-import { useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { AdminContext } from '../../context/AdminContext';
 
 const DoctorList = () => {
+  const { getAllDoctors, doctors, aToken, changeAvailability } = useContext(AdminContext);
 
-  const {getAllDoctors,doctors,aToken,changeAvailability} = useContext(AdminContext);
-
-  useEffect(()=>{
-    if(aToken){
-      console.log(aToken);
-      getAllDoctors();
-    }
-  },[aToken]);
+  useEffect(() => {
+    if (aToken) getAllDoctors();
+  }, [aToken]);
 
   return (
-    <div className='m-5 max-h-[90vh] overflow-y-scroll'> 
-     <h1 className='text-lg font-medium'> DoctorList </h1>
-     <div className='w-full flex flex-wrap gap-4 pt-5 gap-y-6'>
-      {
-        doctors.map((item,index)=>(
-          <div className='border border-indigo-200 rounded-xl max-w-56 overflow-hidden cursor-pointer' key={index}>
-            <img className='bg-indigo-100 hover:bg-blue-500 transition-all duration-500' src={item.image} alt=""/>
-            <div className='p-4'>
-              <p className='text-neutral-800 text-lg font-medium'>{item.name}</p>
-              <p className='text-zinc-600 text-sm'>{item.speciality}</p>
-              <div className='mt-2 flex items-center gap-1 text-sm'>
-                <input onChange={()=>changeAvailability(item._id)} type="checkbox" checked={item.available} />
-                <p>Available</p>
-              </div>
-            </div>
+    <div className="shell section py-6 sm:py-8 reveal">
+      <div className="mb-6">
+        <span className="label uppercase tracking-widest text-[var(--moss)] block mb-1">Directory</span>
+        <h1 className="t-h2 text-[var(--ink)]">Registered Doctors</h1>
+      </div>
 
+      {doctors.length === 0 && <div className="panel empty-state">No doctors registered yet.</div>}
+      <div className="doc-grid">
+        {doctors.map((item, index) => (
+          <div className="doc-card" key={item._id}>
+            <div className="doc-card__frame">
+              <img src={item.image} alt={item.name} />
+            </div>
+            <div className="pt-3 flex flex-col gap-1">
+              <h3 className="t-card text-[var(--ink)]">{item.name}</h3>
+              <p className="muted text-sm">{item.speciality}</p>
+              <label className="mt-2 inline-flex items-center gap-2 cursor-pointer select-none">
+                <input type="checkbox" onChange={() => changeAvailability(item._id)} checked={item.available} className="w-4 h-4 accent-[var(--moss)] rounded cursor-pointer" />
+                <span className={`avail ${item.available ? 'is-on' : ''}`}>
+                  <span className="dot"></span>
+                  {item.available ? 'Available' : 'Unavailable'}
+                </span>
+              </label>
+            </div>
           </div>
-        ))
-      }
-     </div>
+        ))}
+      </div>
     </div>
-  )
-}
+  );
+};
 
 export default DoctorList;

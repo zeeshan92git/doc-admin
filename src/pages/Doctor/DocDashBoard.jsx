@@ -1,82 +1,79 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect } from 'react';
 import { DoctorContext } from '../../context/DoctorContext';
-import { assets } from '../../assets/assets.js';
 import { AppContext } from '../../context/AppContext';
-import { X , Check } from 'lucide-react';
+import { DollarSign, CalendarDays, Users, Clock, X, Check } from 'lucide-react';
 
 function DocDashBoard() {
-  const { dToken, getDashData, dashData , completeAppointments, cancelAppointments } = useContext(DoctorContext);
+  const { dToken, getDashData, dashData, completeAppointments, cancelAppointments } = useContext(DoctorContext);
   const { dateFormat, currency } = useContext(AppContext);
 
-  console.log("dashData:", dashData);
-  console.log("dashData.latestAppointments:", dashData?.latestAppointments);
-  console.log("Is Array:", Array.isArray(dashData?.latestAppointments));
-
   useEffect(() => {
-    if (dToken) {
-      getDashData();
-    }
+    if (dToken) getDashData();
   }, [dToken]);
 
   return dashData && (
+    <div className="shell section py-6 sm:py-8 reveal">
+      <div className="mb-6">
+        <span className="label uppercase tracking-widest text-[var(--moss)] block mb-1">Performance</span>
+        <h1 className="t-h2 text-[var(--ink)]">Doctor Dashboard</h1>
+      </div>
 
-    <div className='m-5'>
-
-      <div className='flex flex-wrap gap-3 '>
-        <div className='flex items-center gap-2  bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105  transition-all'>
-          <img className='w-14' src={assets.earning_icon} alt='' />
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 mb-8">
+        <div className="panel flex items-center gap-4 p-5">
+          <div className="w-12 h-12 rounded-full bg-[var(--moss)] text-[var(--bone)] flex items-center justify-center shrink-0"><DollarSign size={22} /></div>
           <div>
-            <p className='text-xl text-gray-800 font-semibold'>{currency} {dashData.earning}</p>
-            <p className='text-gray-400'>Earning</p>
+            <p className="t-h1 text-[var(--ink)] font-semibold">{currency} {dashData.earning}</p>
+            <p className="label">Earnings</p>
           </div>
         </div>
-
-        <div className='flex items-center gap-2  bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105  transition-all'>
-          <img className='w-14' src={assets.appointments_icon} alt='' />
+        <div className="panel flex items-center gap-4 p-5">
+          <div className="w-12 h-12 rounded-full bg-[var(--sage-2)] text-[var(--moss-2)] flex items-center justify-center shrink-0"><CalendarDays size={22} /></div>
           <div>
-            <p className='text-xl text-gray-800 font-semibold'>{dashData.appointments}</p>
-            <p className='text-gray-400'>Appointments</p>
+            <p className="t-h1 text-[var(--ink)] font-semibold">{dashData.appointments}</p>
+            <p className="label">Appointments</p>
           </div>
         </div>
-
-        <div className='flex items-center gap-2  bg-white p-4 min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105  transition-all'>
-          <img className='w-14' src={assets.patients_icon} alt='' />
+        <div className="panel flex items-center gap-4 p-5">
+          <div className="w-12 h-12 rounded-full bg-[var(--bone-2)] text-[var(--ink)] flex items-center justify-center shrink-0"><Users size={22} /></div>
           <div>
-            <p className='text-xl text-gray-800 font-semibold'>{dashData.patient}</p>
-            <p className='text-gray-400'>Patients</p>
+            <p className="t-h1 text-[var(--ink)] font-semibold">{dashData.patient}</p>
+            <p className="label">Patients</p>
           </div>
         </div>
       </div>
 
-      <div className='bg-white'>
-        <div className='flex items-center gap-2.5  px-4 py-6 mt-10 rounded-t border'>
-          <img src={assets.list_icon} alt="list_icon" />
-          <p className='font-semibold'>Latest Bookings</p>
+      <div className="panel p-0 overflow-hidden">
+        <div className="p-5 border-b border-[var(--rule)] flex items-center gap-2.5">
+          <Clock size={18} className="text-[var(--moss)]" />
+          <h2 className="t-h3 text-[var(--ink)]">Recent Bookings</h2>
         </div>
-
-        <div className='pt-4 border border-t-0'>
-          {dashData.latestAppointments.map((item, index) => (
-            <div className='flex items-center px-6 py-3 gap-3 hover:bg-gray-100' key={index}>
-              <img className='w-10 h-10 rounded-full' src={item.userData.image} alt="" />
-              <div className='flex-1 text-sm'>
-                <p className='text-gray-800 font-medium'>{item.userData.name}</p>
-                <p className='text-gray-600'>Booked at {dateFormat(item.slotDate)}</p>
+        <div className="divide-y divide-[var(--rule)]">
+          {(dashData.latestAppointments || []).length === 0 && <p className="empty-state">No recent bookings.</p>}
+          {(dashData.latestAppointments || []).map((item, index) => (
+            <div className="flex items-center justify-between p-4 px-5 hover:bg-[var(--bone-2)]/40 transition-colors gap-3" key={item._id}>
+              <div className="flex items-center gap-3 min-w-0">
+                <img className="w-9 h-9 rounded-full object-cover shrink-0 border border-[var(--rule)]" src={item.userData.image} alt="" />
+                <div className="min-w-0">
+                  <p className="font-medium text-[var(--ink)] truncate">{item.userData.name}</p>
+                  <p className="muted text-xs truncate">Booked on {dateFormat(item.slotDate)}</p>
+                </div>
               </div>
-              {
-                item.cancelled ? <p className='text-white bg-red-500 p-2  rounded-sm  text-sm font-medium'>Cancelled</p>
-                  : item.isCompleted ? <p className='text-white bg-green-500 p-2  rounded-sm  text-sm font-medium'>Completed</p>
-                    : <div className='flex items-center gap-2 '>
-                      <p onClick={() => cancelAppointments(item._id)} className='w-10 cursor-pointer rounded-full border  border-red-500 p-2 text-red-500 hover:bg-red-500 hover:text-white'><X /></p>
-                      <p onClick={() => completeAppointments(item._id)} className='w-10 cursor-pointer rounded-full p-2 text-green-500 border border-green-500 hover:bg-green-500 hover:text-white'><Check /></p>
-                    </div>
-              }
+              {item.cancelled ? (
+                <span className="chip text-[11px] py-1 px-3 bg-[var(--brick)]/10 text-[var(--brick)] border-[var(--brick)]/20 shrink-0">Cancelled</span>
+              ) : item.isCompleted ? (
+                <span className="chip text-[11px] py-1 px-3 bg-[var(--ok)]/10 text-[var(--ok)] border-[var(--ok)]/20 shrink-0">Completed</span>
+              ) : (
+                <div className="flex items-center gap-2 shrink-0">
+                  <button onClick={() => cancelAppointments(item._id)} className="w-8 h-8 rounded-full border border-[var(--rule)] text-[var(--brick)] flex items-center justify-center hover:bg-[var(--brick)] hover:text-[var(--paper)] transition-colors" title="Cancel"><X size={14} /></button>
+                  <button onClick={() => completeAppointments(item._id)} className="w-8 h-8 rounded-full border border-[var(--rule)] text-[var(--ok)] flex items-center justify-center hover:bg-[var(--ok)] hover:text-[var(--paper)] transition-colors" title="Complete"><Check size={14} /></button>
+                </div>
+              )}
             </div>
           ))}
         </div>
-
       </div>
     </div>
-  )
+  );
 }
 
 export default DocDashBoard;

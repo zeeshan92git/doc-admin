@@ -3,6 +3,7 @@ import { assets } from '../../assets/assets.js';
 import { AdminContext } from '../../context/AdminContext';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { Upload, Plus, User, Mail, Lock, Award, DollarSign, Stethoscope, MapPin, FileText } from 'lucide-react';
 
 const AddDoct = () => {
   const [docImg, setdocImg] = useState(false);
@@ -22,9 +23,7 @@ const AddDoct = () => {
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      if (!docImg) {
-        return toast.error('Image required')
-      }
+      if (!docImg) return toast.error('Image required');
       const formData = new FormData();
       formData.append('image', docImg);
       formData.append('name', name);
@@ -37,133 +36,98 @@ const AddDoct = () => {
       formData.append('degree', degree);
       formData.append('address', JSON.stringify({ line1: address1, line2: address2 }));
 
-      //log data
-      formData.forEach((value, key) => {
-        console.log(`${key}:${value}`);
-      })
-
-      const { data } = await axios.post(backEndUrl + '/api/admin/add-doctor', formData, { headers: { Authorization: `Bearer ${aToken}` }});
-      console.log(data);
-      if(data.success){
+      const { data } = await axios.post(backEndUrl + '/api/admin/add-doctor', formData, { headers: { Authorization: `Bearer ${aToken}` } });
+      if (data.success) {
         toast.success(data.message);
-        setdocImg(false);
-        setName('');
-        setPassword('');
-        setEmail('');
-        setAddress2('');
-        setDegree('');
-        setFee('');
-        setAbout('');
-        setAddress1('');
-      }else{
+        setdocImg(false); setName(''); setPassword(''); setEmail(''); setAddress2(''); setDegree(''); setFee(''); setAbout(''); setAddress1('');
+      } else {
         toast.error(data.message);
       }
-    }
-    catch (error) {
-      console.error(error);
-      toast.error("An error occured.")
+    } catch (error) {
+      toast.error("An error occurred.");
     }
   };
 
-
   return (
-    <form onSubmit={onSubmitHandler} className='w-full m-5'>
-      <p className='mb-3 font-medium text-lg'>Add Doctors</p>
-
-      <div className='bg-white px-8 py-8 border rounded w-full max-w-4xl max-h-[80vh] overflow-y-scroll'>
-        <div className='flex items-center gap-4 mb-8 text-gray-500'>
-          <label htmlFor="doc-img">
-            <img className='w-16 bg-gray-100 rounded-full cursor-pointer' src={docImg ? URL.createObjectURL(docImg) : assets.upload_area} alt="" />
-          </label>
-          <input onChange={(e) => setdocImg(e.target.files[0])} type="file" id='doc-img' hidden />
-          {docImg ? <p>Image Uploaded<br />Successfully!</p>: <p>Upload Doctor <br />Image!</p>}
-        </div>
-
-        <div className='flex flex-col lg:flex-row items-start gap-10 text-gray-600'>
-          <div className='w-full lg:flex-1 flex flex-col gap-4 '>
-
-            <div className='flex-1 flex flex-col gap-1'>
-              <p className='text-black font-semibold'>Doctor Name</p>
-              <input onChange={(e) => setName(e.target.value)} value={name} className='border  rounded px-3 py-2' type="text" placeholder='Enter Name' required />
-            </div>
-
-            <div className='flex-1 flex flex-col gap-1'>
-              <p className='text-black font-semibold'>Doctor Email</p>
-              <input onChange={(e) => setEmail(e.target.value)} value={email} className='border rounded px-3 py-2' type="email" placeholder='Enter Email' required />
-            </div>
-
-            <div className='flex-1 flex flex-col gap-1'>
-              <p className='text-black font-semibold'>Doctor Password</p>
-              <input onChange={(e) => setPassword(e.target.value)} value={password} className='border rounded px-3 py-2' type="password" placeholder='Enter Password' required />
-            </div>
-
-            <div className='flex-1 flex flex-col gap-1'>
-              <p className='text-black font-semibold'>Experience</p>
-              <select onChange={(e) => setExperience(e.target.value)} value={experience} className='border rounded px-3 py-2'>
-                <option value="1 Year">1 Year</option>
-                <option value="2 Year">2 Year</option>
-                <option value="3 Year">3 Year</option>
-                <option value="4 Year">4 Year</option>
-                <option value="5 Year">5 Year</option>
-                <option value="6 Year">6 Year</option>
-                <option value="7 Year">7 Year</option>
-                <option value="8 Year">8 Year</option>
-                <option value="9 Year">9 Year</option>
-                <option value="10 Year">10 Year</option>
-              </select>
-            </div>
-
-            <div className='flex-1 flex flex-col gap-1'>
-              <p className='text-black font-semibold'>Fee</p>
-              <input onChange={(e) => setFee(e.target.value)} value={fee} className='border rounded px-3 py-2' type="numbaer" placeholder='Fee' required />
-            </div>
-
-          </div>
-
-          <div className='w-full lg:flex-1 flex flex-col gap-4 '>
-
-            <div className='flex-1 flex flex-col gap-1'>
-              <p className='text-black font-semibold'>Speciality</p>
-              <select onChange={(e) => setSpeciality(e.target.value)} value={speciality} className='border rounded px-3 py-2'>
-                <option value="General physician">General physician</option>
-                <option value="Gynecologist">Gynecologist</option>
-                <option value="Dermatologist">Dermatologist</option>
-                <option value="Pediatrician">Pediatrician</option>
-                <option value="Neurologist">Neurologist</option>
-                <option value="Gasteroenterologist">Gasteroenterologist</option>
-              </select>
-            </div>
-
-            <div className='flex-1 flex flex-col gap-1'>
-              <p className='text-black font-semibold'>Degree</p>
-              <input onChange={(e) => setDegree(e.target.value)} value={degree} className='border rounded px-3 py-2' type="text" placeholder='Degree Name' required />
-            </div>
-
-            <div className='flex-1 flex flex-col gap-1'>
-              <p className='text-black font-semibold'>Address</p>
-              <input onChange={(e) => setAddress1(e.target.value)} value={address1} className='border rounded px-3 py-2' type="text" placeholder='Address 1' required />
-              <input onChange={(e) => setAddress2(e.target.value)} value={address2} className='border rounded px-3 py-2' type="text" placeholder='Address 2' required />
-            </div>
-
-          </div>
-        </div>
-
-        <div>
-
-        </div>
-
-        <div>
-          <p className='mt-4 mb-2 text-black font-semibold'>About Doctor</p>
-          <textarea onChange={(e) => setAbout(e.target.value)} value={about} className='w-full px-4 pt-2 border rounded text-gray-500 ' placeholder='Write About Doctor' rows={5} required />
-        </div>
-
-
-        <button type='submit' className='bg-blue-600 px-10 py-3 mt-4 text-lg  text-white rounded-full cursor-pointer hover:bg-blue-700 hover:font-semibold transition-all duration-300 '>Add Doctor</button>
+    <div className="shell section py-6 sm:py-8 reveal">
+      <div className="mb-6">
+        <span className="label uppercase tracking-widest text-[var(--moss)] block mb-1">Administration</span>
+        <h1 className="t-h2 text-[var(--ink)]">Add Doctor Profile</h1>
       </div>
 
-    </form>
+      <form onSubmit={onSubmitHandler} className="panel max-w-4xl">
+        <div className="flex items-center gap-5 mb-6 pb-6 border-b border-[var(--rule)]">
+          <label htmlFor="doc-img" className="cursor-pointer group relative">
+            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-dashed border-[var(--ink)] bg-[var(--bone)] flex items-center justify-center transition-all group-hover:border-[var(--moss)]">
+              {docImg ? <img className="w-full h-full object-cover" src={URL.createObjectURL(docImg)} alt="" /> : <Upload size={24} className="text-[var(--mist)]" />}
+            </div>
+          </label>
+          <input onChange={(e) => setdocImg(e.target.files[0])} type="file" accept="image/*" id="doc-img" className="sr-only" />
+          <div>
+            <p className="font-semibold text-[var(--ink)]">Doctor Profile Photo</p>
+            <p className="muted text-xs mt-0.5">{docImg ? 'Photo attached' : 'Upload professional photo'}</p>
+          </div>
+        </div>
 
-  )
-}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="field">
+            <label htmlFor="adddoct2" className="label flex items-center gap-1.5"><User size={14} /> Name</label>
+            <input id="adddoct2" onChange={(e) => setName(e.target.value)} value={name} className="input" type="text" placeholder="Dr. Jane Doe" required />
+          </div>
+          <div className="field">
+            <label htmlFor="adddoct3" className="label flex items-center gap-1.5"><Mail size={14} /> Email</label>
+            <input id="adddoct3" onChange={(e) => setEmail(e.target.value)} value={email} className="input" type="email" placeholder="jane@doccure.com" required />
+          </div>
+          <div className="field">
+            <label htmlFor="adddoct4" className="label flex items-center gap-1.5"><Lock size={14} /> Password</label>
+            <input id="adddoct4" onChange={(e) => setPassword(e.target.value)} value={password} className="input" type="password" placeholder="••••••••" required />
+          </div>
+          <div className="field">
+            <label htmlFor="adddoct5" className="label flex items-center gap-1.5"><Award size={14} /> Experience</label>
+            <select id="adddoct5" onChange={(e) => setExperience(e.target.value)} value={experience} className="select">
+              {[...Array(10)].map((_, i) => <option key={i} value={`${i + 1} Year`}>{i + 1} Year{i > 0 ? 's' : ''}</option>)}
+            </select>
+          </div>
+          <div className="field">
+            <label htmlFor="adddoct6" className="label flex items-center gap-1.5"><DollarSign size={14} /> Fee</label>
+            <input id="adddoct6" onChange={(e) => setFee(e.target.value)} value={fee} className="input" min="0" type="number" placeholder="50" required />
+          </div>
+          <div className="field">
+            <label htmlFor="adddoct7" className="label flex items-center gap-1.5"><Stethoscope size={14} /> Speciality</label>
+            <select id="adddoct7" onChange={(e) => setSpeciality(e.target.value)} value={speciality} className="select">
+              <option value="General physician">General physician</option>
+              <option value="Gynecologist">Gynecologist</option>
+              <option value="Dermatologist">Dermatologist</option>
+              <option value="Pediatrician">Pediatrician</option>
+              <option value="Neurologist">Neurologist</option>
+              <option value="Gasteroenterologist">Gasteroenterologist</option>
+            </select>
+          </div>
+          <div className="field">
+            <label htmlFor="adddoct8" className="label flex items-center gap-1.5"><FileText size={14} /> Degree</label>
+            <input id="adddoct8" onChange={(e) => setDegree(e.target.value)} value={degree} className="input" type="text" placeholder="MBBS, MD" required />
+          </div>
+          <div className="field">
+            <label htmlFor="adddoct9" className="label flex items-center gap-1.5"><MapPin size={14} /> Address</label>
+            <input id="adddoct9" onChange={(e) => setAddress1(e.target.value)} value={address1} className="input mb-2" type="text" placeholder="Address Line 1" required />
+            <input onChange={(e) => setAddress2(e.target.value)} value={address2} aria-label="Address Line 2" className="input" type="text" placeholder="Address Line 2" required />
+          </div>
+        </div>
 
-export default AddDoct; 
+        <div className="field mt-5">
+          <label htmlFor="adddoct10" className="label">About Doctor</label>
+          <textarea id="adddoct10" onChange={(e) => setAbout(e.target.value)} value={about} className="textarea" placeholder="Biography and qualifications..." rows={4} required />
+        </div>
+
+        <div className="mt-6 pt-5 border-t border-[var(--rule)] flex justify-end">
+          <button type="submit" className="btn btn-solid">
+            <span>Register Doctor</span>
+            <Plus size={16} />
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default AddDoct;
